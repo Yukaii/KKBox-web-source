@@ -1,9 +1,8 @@
 # 	Mp3tag parser for kkbox website
 #
-# 	Src created by otacorn
+# 	Src created by otacorn(玉米)
 #
-#
-#
+# #################################
 
 [Name]=KKbox
 [BasedOn]=http://www.kkbox.com
@@ -21,15 +20,16 @@
 # ###################################################################
 
 # debug "on" "d:\\debug_kkbox1.htm"
-# regexpreplace "[^<]+%kkbox" ""
 
-findline "</h2>" 2
-
+findline "class=\"albums five\">"
 
 do
-	findline "<a href=\""
+	findline "class=\"album\""
+	findline "class=\"cover\""
+	# findline "href=\""
+
 	# Url
-	findinline "\""
+	findinline "href=\""
 	sayuntil "\""
 	say "|"
 
@@ -40,11 +40,11 @@ do
 	say "|"
 
 	# Artist
-	findline "title=\"" 2
+	findline "item-h album-name" 2
+	findline "<a href"
 	findinline "title=\""
 	sayuntil "\""
 	saynewline
-
 
 	findline "class=\""
 	findinline "class=\""
@@ -57,10 +57,9 @@ while "album"
 # ###################################################################
 #debug "on" "d:\\debug_kkbox2.htm"
 
-
 # CoverURL
 outputto "coverurl"
 findline "<div class=\"figure\">"
 findline "<img src=\""
 findinline "src=\""
-sayuntil "?ver"
+sayuntil "\""

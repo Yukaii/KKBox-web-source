@@ -1,16 +1,15 @@
 # 	Mp3tag parser for kkbox website
 #
-# 	Src created by otacorn
+# 	Src created by otacorn(玉米)
 #
-#
-#
+# #################################
 
 [Name]=KKbox
 [BasedOn]=http://www.kkbox.com
 [IndexUrl]=http://www.kkbox.com/tw/tc/search.php?search=album&word=%s
 [AlbumUrl]=http://www.kkbox.com
 [WordSeperator]=+
-[IndexFormat]=%_url%|%album%|%artist%
+[IndexFormat]=%_url%|%Album%|%Artist%
 [SearchBy]=%album%
 [Encoding]=url-utf-8
 
@@ -20,16 +19,17 @@
 #					I  N  D  E  X
 # ###################################################################
 
-# debug "on" "d:\\debug_kkbox1.htm"
-# regexpreplace "[^<]+%kkbox" ""
+# debug "on" "c:\\debug_kkbox1.htm"
 
-findline "</h2>" 2
-
+findline "class=\"albums five\">"
 
 do
-	findline "<a href=\""
+	findline "class=\"album\""
+	findline "class=\"cover\""
+	# findline "href=\""
+
 	# Url
-	findinline "\""
+	findinline "href=\""
 	sayuntil "\""
 	say "|"
 
@@ -40,11 +40,11 @@ do
 	say "|"
 
 	# Artist
-	findline "title=\"" 2
+	findline "item-h album-name" 2
+	findline "<a href"
 	findinline "title=\""
 	sayuntil "\""
 	saynewline
-
 
 	findline "class=\""
 	findinline "class=\""
@@ -55,21 +55,7 @@ while "album"
 # ###################################################################
 #					A  L  B  U  M
 # ###################################################################
-# debug "on" "d:\\debug_kkbox2.htm"
-
-# Artist
-outputto "artist"
-findline "<div class=\"container\">" 3
-findline "<a href=\""
-findinline "\">" 5
-sayuntil "</a>"
-
-# CoverURL
-outputto "coverurl"
-findline "<div class=\"figure\">"
-findline "<img src=\""
-findinline "src=\""
-sayuntil "?ver"
+debug "on" "c:\\debug_kkbox2.htm"
 
 # Album
 outputto "Album"
@@ -77,9 +63,29 @@ findline "<h1 itemprop=\"name\">"
 findinline "<h1 itemprop=\"name\">"
 sayuntil "</h1>"
 
+# sort of rewind Zzzz
+gotoline 1
+
+# CoverURL
+outputto "coverurl"
+findline "<div class=\"figure\">"
+findline "<img src=\""
+findinline "src=\""
+sayuntil "\""
+
+# lets go through table
+findline "<dl class=\"data\""
+findline "<dt>"
+
+# Artist
+outputto "artist"
+findline "<a"
+findinline ">" 2
+sayuntil "</a"
+
 # Genre
 outputto "Genre"
-findline "<dd>"
+findline "<dd>" 2
 findinline "<dd>"
 sayuntil "</dd>"
 
@@ -90,25 +96,26 @@ findinline "<dd>"
 saynextnumber
 
 
-findline "<tr id"
+findline "class=\"song-list\""
 
 do
 	# Track
 	outputto "track temp"
-	findline "song-track\">"
+	findline "td class=\"song-track"
 	findinline "song-track\">"
-	sayuntil "</td>"
-	say "|"
-
-	# tracks?
-	outputto "tracks"
+	# sayuntil "</td>"
+	saynextnumber
 	say "|"
 
 	# Title
 	outputto "title temp"
 	findline "<a href="
-	FindinLine "\">" 2
+	findinline ">"
 	sayuntil "<em>"
+	say "|"
+
+	# tracks ++
+	outputto "tracks"
 	say "|"
 
 	findline "</tr>"
