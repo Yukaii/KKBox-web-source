@@ -1,0 +1,126 @@
+# 	Mp3tag parser for kkbox website
+#
+# 	Src created by otacorn
+#
+#
+#
+
+[Name]=KKbox
+[BasedOn]=http://www.kkbox.com
+[IndexUrl]=http://www.kkbox.com/tw/tc/search.php?search=album&word=%s
+[AlbumUrl]=http://www.kkbox.com
+[WordSeperator]=+
+[IndexFormat]=%_url%|%album%|%artist%
+[SearchBy]=%album%
+[Encoding]=url-utf-8
+
+
+[ParserScriptIndex]=...
+# ###################################################################
+#					I  N  D  E  X
+# ###################################################################
+
+# debug "on" "d:\\debug_kkbox1.htm"
+# regexpreplace "[^<]+%kkbox" ""
+
+findline "</h2>" 2
+
+
+do
+	findline "<a href=\""
+	# Url
+	findinline "\""
+	sayuntil "\""
+	say "|"
+
+	# Album
+	findline "title=\""
+	findinline "title=\""
+	sayuntil "\""
+	say "|"
+
+	# Artist
+	findline "title=\"" 2
+	findinline "title=\""
+	sayuntil "\""
+	saynewline
+
+
+	findline "class=\""
+	findinline "class=\""
+while "album"
+
+
+[ParserScriptAlbum]=...
+# ###################################################################
+#					A  L  B  U  M
+# ###################################################################
+# debug "on" "d:\\debug_kkbox2.htm"
+
+# Artist
+outputto "artist"
+findline "<div class=\"container\">" 3
+findline "<a href=\""
+findinline "\">" 5
+sayuntil "</a>"
+
+# CoverURL
+outputto "coverurl"
+findline "<div class=\"figure\">"
+findline "<img src=\""
+findinline "src=\""
+sayuntil "?ver"
+
+# Album
+outputto "Album"
+findline "<h1 itemprop=\"name\">"
+findinline "<h1 itemprop=\"name\">"
+sayuntil "</h1>"
+
+# Genre
+outputto "Genre"
+findline "<dd>"
+findinline "<dd>"
+sayuntil "</dd>"
+
+# Year
+outputto "Year"
+findline "<dd>" 2
+findinline "<dd>"
+saynextnumber
+
+
+findline "<tr id"
+
+do
+	# Track
+	outputto "track temp"
+	findline "song-track\">"
+	findinline "song-track\">"
+	sayuntil "</td>"
+	say "|"
+
+	# tracks?
+	outputto "tracks"
+	say "|"
+
+	# Title
+	outputto "title temp"
+	findline "<a href="
+	FindinLine "\">" 2
+	sayuntil "<em>"
+	say "|"
+
+	findline "</tr>"
+	findinline "</tr>"
+
+while "<tr id=\"songrow"
+
+outputto "title"
+sayoutput "title temp"
+
+outputto "track"
+sayoutput "track temp"
+
+set "title temp"
+set "track temp"

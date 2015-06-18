@@ -1,0 +1,66 @@
+# 	Mp3tag parser for kkbox website
+#
+# 	Src created by otacorn
+#
+#
+#
+
+[Name]=KKbox
+[BasedOn]=http://www.kkbox.com
+[IndexUrl]=http://www.kkbox.com/tw/tc/search.php?search=album&word=%s
+[AlbumUrl]=http://www.kkbox.com
+[WordSeperator]=+
+[IndexFormat]=%_url%|%album%|%artist%
+[SearchBy]=%album%
+[Encoding]=url-utf-8
+
+
+[ParserScriptIndex]=...
+# ###################################################################
+#					I  N  D  E  X
+# ###################################################################
+
+# debug "on" "d:\\debug_kkbox1.htm"
+# regexpreplace "[^<]+%kkbox" ""
+
+findline "</h2>" 2
+
+
+do
+	findline "<a href=\""
+	# Url
+	findinline "\""
+	sayuntil "\""
+	say "|"
+
+	# Album
+	findline "title=\""
+	findinline "title=\""
+	sayuntil "\""
+	say "|"
+
+	# Artist
+	findline "title=\"" 2
+	findinline "title=\""
+	sayuntil "\""
+	saynewline
+
+
+	findline "class=\""
+	findinline "class=\""
+while "album"
+
+
+[ParserScriptAlbum]=...
+# ###################################################################
+#					A  L  B  U  M
+# ###################################################################
+#debug "on" "d:\\debug_kkbox2.htm"
+
+
+# CoverURL
+outputto "coverurl"
+findline "<div class=\"figure\">"
+findline "<img src=\""
+findinline "src=\""
+sayuntil "?ver"
