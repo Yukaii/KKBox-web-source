@@ -19,14 +19,13 @@
 #					I  N  D  E  X
 # ###################################################################
 
-# debug "on" "c:\\debug_kkbox1.htm"
+debug "on" "c:\\debug_kkbox1.htm"
 
 findline "class=\"albums five\">"
 
 do
-	findline "class=\"album\""
+	findline "li class=\"album\""
 	findline "class=\"cover\""
-	# findline "href=\""
 
 	# Url
 	findinline "href=\""
@@ -34,7 +33,6 @@ do
 	say "|"
 
 	# Album
-	findline "title=\""
 	findinline "title=\""
 	sayuntil "\""
 	say "|"
@@ -46,7 +44,7 @@ do
 	sayuntil "\""
 	saynewline
 
-	findline "class=\""
+	findline "<li class=\""
 	findinline "class=\""
 while "album"
 
@@ -59,69 +57,67 @@ debug "on" "c:\\debug_kkbox2.htm"
 
 # Album
 outputto "Album"
-findline "<h1 itemprop=\"name\">"
-findinline "<h1 itemprop=\"name\">"
-sayuntil "</h1>"
-
-# sort of rewind Zzzz
-gotoline 1
+findline "class=\"fa fa-angle-right\""
+findline "span"
+findinline "span>"
+sayuntil "</span>"
 
 # CoverURL
 outputto "coverurl"
-findline "<div class=\"figure\">"
 findline "<img src=\""
 findinline "src=\""
 sayuntil "\""
 
-# lets go through table
-findline "<dl class=\"data\""
-findline "<dt>"
+
+gotoline 1
 
 # Artist
 outputto "artist"
+findline "<p class=\"tit-14\">"
 findline "<a"
-findinline ">" 2
+findinline ">"
 sayuntil "</a"
-
-# Genre
-outputto "Genre"
-findline "<dd>" 2
-findinline "<dd>"
-sayuntil "</dd>"
 
 # Year
 outputto "Year"
-findline "<dd>" 2
-findinline "<dd>"
+findline "<p class=\"tit-16\">" 2
+findinline ">"
 saynextnumber
 
+# Genre
+outputto "Genre"
+findline "<p class=\"tit-14\">"
+findline "<p class=\"tit-16\">"
+findinline ">"
+sayuntil "</"
 
-findline "class=\"song-list\""
+
+findline "song-list js-song-list"
 
 do
 	# Track
 	outputto "track temp"
-	findline "td class=\"song-track"
-	findinline "song-track\">"
-	# sayuntil "</td>"
+	findline "data-song_idx"
+	findinline "data-song_idx=\""
 	saynextnumber
 	say "|"
 
 	# Title
 	outputto "title temp"
+	findline "class=\"song-data"
 	findline "<a href="
 	findinline ">"
-	sayuntil "<em>"
+	sayuntil "</"
 	say "|"
 
 	# tracks ++
 	outputto "tracks"
 	say "|"
 
-	findline "</tr>"
-	findinline "</tr>"
+	findline "<li"
+	findinline "<li "
 
-while "<tr id=\"songrow"
+while "class=\"clearfix\""
 
 outputto "title"
 sayoutput "title temp"

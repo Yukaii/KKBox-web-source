@@ -24,9 +24,8 @@
 findline "class=\"albums five\">"
 
 do
-	findline "class=\"album\""
+	findline "li class=\"album\""
 	findline "class=\"cover\""
-	# findline "href=\""
 
 	# Url
 	findinline "href=\""
@@ -34,7 +33,6 @@ do
 	say "|"
 
 	# Album
-	findline "title=\""
 	findinline "title=\""
 	sayuntil "\""
 	say "|"
@@ -46,7 +44,7 @@ do
 	sayuntil "\""
 	saynewline
 
-	findline "class=\""
+	findline "<li class=\""
 	findinline "class=\""
 while "album"
 
@@ -58,8 +56,14 @@ while "album"
 #debug "on" "d:\\debug_kkbox2.htm"
 
 # CoverURL
+# outputto "Album"
+findline "class=\"fa fa-angle-right\""
+findline "span"
+findinline "span>"
+# sayuntil "</span>"
+
+# CoverURL
 outputto "coverurl"
-findline "<div class=\"figure\">"
 findline "<img src=\""
 findinline "src=\""
 sayuntil "\""
