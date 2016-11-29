@@ -1,5 +1,7 @@
 # KKBox web source for Mp3Tag
 
+[點此下載](https://github.com/Yukaii/KKBox-web-source/releases/download/v1.0.0/kkbox_mp3tag_web_source.zip)
+
 ## 說明
 
 Mp3Tag 這傳奇性軟體的好就不用多說了 XD，如今在 OS X 底下我也找不到更好用的，只好用 wine 也裝了份。
