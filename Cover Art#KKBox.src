@@ -1,6 +1,7 @@
 # 	Mp3tag parser for kkbox website
 #
 # 	Src created by otacorn(玉米)
+#		https://otacorn.blogspot.com
 #
 # #################################
 
@@ -21,10 +22,10 @@
 
 # debug "on" "d:\\debug_kkbox1.htm"
 
-findline "class=\"albums five\">"
+findline "class=\"search-group\""
 
 do
-	findline "li class=\"album\""
+	findline "class=\"album\""
 	findline "class=\"cover\""
 
 	# Url
@@ -38,13 +39,13 @@ do
 	say "|"
 
 	# Artist
-	findline "item-h album-name" 2
+	findline "playlist-sharer"
 	findline "<a href"
 	findinline "title=\""
 	sayuntil "\""
 	saynewline
 
-	findline "<li class=\""
+	findline "<div class" 2
 	findinline "class=\""
 while "album"
 
