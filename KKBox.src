@@ -114,6 +114,12 @@ do
 	saynextnumber
 	say "|"
 
+	outputto "_length"
+	findline "class=\"time\""
+	findinline ">"
+	sayuntil "</"
+	say "|"
+
 	# Title
 	outputto "title temp"
 	findline "class=\"song-data"
