@@ -1,0 +1,37 @@
+service: kkbox-api-gateway
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  environment:
+    KKBOX_APP_ID: ${self:custom.config.kkbox_app_id, ''}
+    KKBOX_APP_SECRET: ${self:custom.config.kkbox_app_secret, ''}
+    REDIS_URL: ${self:custom.config.redis_url, ''}
+  usagePlan:
+    quota:
+      limit: 5000
+      offset: 2
+      period: MONTH
+    throttle:
+      burstLimit: 50
+      rateLimit: 30
+
+functions:
+  index:
+    handler: src/router.handler
+    events:
+      - http:
+          path: api
+          method: any
+          cors: true
+      - http:
+          path: api/{id}
+          method: any
+          cors: true
+
+custom:
+  config: ${file(./config.yml)}
