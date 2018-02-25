@@ -12,12 +12,15 @@ async function searchAlbum (query, callback) {
                          .fetchSearchResult(50)
   callback(null, {
     statusCode: 200,
-    body: response.data
+    body: JSON.stringify(response.data).replace(/\":/g, '": ').replace(/,\"/g, ', "')
   })
 }
 
 export async function index(event, context, callback) {
   await init()
+
+  // TODO: check user agent
+  const { headers: { 'User-Agent': userAgent } } = event
 
   switch(event.pathParameters.id) {
     case 'searchAlbum':
