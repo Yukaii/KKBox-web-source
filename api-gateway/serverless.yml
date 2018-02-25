@@ -22,12 +22,8 @@ provider:
 
 functions:
   index:
-    handler: src/router.handler
+    handler: src/handler.index
     events:
-      - http:
-          path: api
-          method: any
-          cors: true
       - http:
           path: api/{id}
           method: any
