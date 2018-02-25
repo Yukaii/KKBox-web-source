@@ -6,48 +6,51 @@
 # #################################
 
 [Name]=KKbox
-[BasedOn]=http://www.kkbox.com
-[IndexUrl]=http://www.kkbox.com/tw/tc/search.php?search=album&word=%s
-[AlbumUrl]=http://www.kkbox.com
-[WordSeperator]=+
-[IndexFormat]=%_url%|%Album%|%Artist%
+[BasedOn]=http://localhost:3000/
+[IndexUrl]=http://localhost:3000/api/searchAlbum?keyword=%s
+[AlbumUrl]=http://localhost:3000/api/albums?id=
+[WordSeparator]=%20
+[IndexFormat]=%Artist%|%Album%|%_url%|%Year%
 [SearchBy]=%album%
+[UserAgent]=1
 [Encoding]=url-utf-8
 
-
 [ParserScriptIndex]=...
-# ###################################################################
-#					I  N  D  E  X
-# ###################################################################
-
+# ##############################
+#					I  N  D  E  X        #
+# ##############################
 debug "on" "c:\\debug_kkbox1.htm"
 
-findline "class=\"search-group\""
+json "ON"
 
-do
-	findline "class=\"album\""
-	findline "class=\"cover\""
+json_select_object "albums"
+	json_foreach "data"
 
-	# Url
-	findinline "href=\""
-	sayuntil "\""
-	say "|"
+		# Artist
+		json_select_object "artist"
+			json_select "name"
+			sayrest
+		json_unselect_object
+		say "|"
 
-	# Album
-	findinline "title=\""
-	sayuntil "\""
-	say "|"
+		# Album
+		json_select "name"
+		sayrest
+		say "|"
 
-	# Artist
-	findline "playlist-sharer"
-	findline "<a href"
-	findinline "title=\""
-	sayuntil "\""
-	saynewline
+		# Url
+		json_select "id"
+		sayrest
+		say "|"
 
-	findline "<div class" 2
-	findinline "class=\""
-while "album"
+		# Year
+		json_select "release_date"
+		sayuntil "\""
+
+		saynewline
+
+	json_foreach_end
+json_unselect_object
 
 
 [ParserScriptAlbum]=...
@@ -56,97 +59,61 @@ while "album"
 # ###################################################################
 debug "on" "c:\\debug_kkbox2.htm"
 
-# CoverURL
-outputto "coverurl"
-findline "class=\"album-pic\""
-findline "<img src=\""
-findinline "src=\""
-sayuntil "\""
+json "ON"
 
+json_select_object "meta"
+	# Album
+	json_select "name"
+	outputto "album"
+	sayrest
 
-# Album
-outputto "Album"
-# findline "class=\"fa fa-angle-right\""
-# findline "span"
-findline "<h1"
-moveline 1
-# sayregexp "[^\n]+"
-sayuntil "</"
+	# Artist
+	json_select_object "artist"
+		json_select "name"
+		outputto "artist"
+		sayrest
+	json_unselect_object
 
+	# Year
+	json_select "release_date"
+	outputto "year"
+	sayrest
 
-gotoline 1
-findline "class=\"media-tag"
+	# Cover
+	json_select_object "image"
+		json_select "url"
+		outputto "coverurl"
+		sayrest
+	json_unselect_object
 
-# Artist
-outputto "artist"
-findline "tit-16"
-moveline 1
-findline ">"
-findinline ">"
-sayuntil "<"
+json_unselect_object
 
+json_select_object "tracks"
+	json_foreach "data"
+		# Track number
+		json_select "track_number"
+		outputto "track temp"
+		sayrest
+		say "|"
 
-# rewind
-gotoline 1
+		# Length
+		outputto "_length"
+		json_select "_length"
+		sayrest
+		say "|"
 
-findline "class=\"media-tag"
-findline "</div"
+		# Title
+		outputto "title temp"
+		json_select "name"
+		sayrest
+		say "|"
 
-# Genre
-outputto "Genre"
-moveline -1
-findinline ">"
-sayuntil "</"
+		# Tracks
+		outputto "tracks"
+		say "|"
 
-# Year
-outputto "Year"
-moveline -3
-findinline ">"
-saynextnumber
-
-findline "song-list js-song-list"
-
-do
-	# Track
-	outputto "track temp"
-	findline "data-song_idx"
-	findinline "data-song_idx=\""
-	saynextnumber
-	say "|"
-
-	outputto "_length"
-	findline "class=\"time\""
-	findinline ">"
-	sayuntil "</"
-	say "|"
-
-	# Title
-	outputto "title temp"
-	findline "class=\"song-data"
-	findline "<a href="
-	findinline ">"
-	sayuntil "</"
-	say "|"
-
-	# tracks ++
-	outputto "tracks"
-	say "|"
-
-	findline "</li"
-	# findinline "</li "
-	moveline 2
-	findinline "<"
-
-	if "li class=\"clearfix\""
-		# outputto "track temp"
-		# say "|"
-		# outputto "title temp"
-		# say "|"
-		# outputto "tracks"
-		# say "|"
-	endif
-
-while "li class=\"clearfix\""
+	json_foreach_end
+json_unselect_object
 
 outputto "title"
 sayoutput "title temp"
