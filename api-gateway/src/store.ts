@@ -21,7 +21,17 @@ class Store {
   }
 
   close () {
-    this.client.end(true)
+    this.client.quit()
+
+    return new Promise(resolve => {
+      this.client.on('end', () => {
+        resolve()
+      })
+    })
+  }
+
+  public getClient () {
+    return this.client
   }
 }
 

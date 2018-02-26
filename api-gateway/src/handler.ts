@@ -58,12 +58,20 @@ export async function index(event, context, callback) {
   // TODO: check user agent and minimum script compatible version
   const { headers: { 'User-Agent': userAgent } } = event
 
+  const cb = async (...args) => {
+    await Api.dispose()
+
+    callback(...args)
+  }
+
   switch(event.pathParameters.id) {
     case 'searchAlbum':
-      return searchAlbum(event.queryStringParameters, callback)
+      return searchAlbum(event.queryStringParameters, cb)
     case 'albums':
-      return getAlbum(event.queryStringParameters, callback)
+      return getAlbum(event.queryStringParameters, cb)
   }
+
+  await Api.dispose()
 
   callback(null, {
     statusCode: 500,

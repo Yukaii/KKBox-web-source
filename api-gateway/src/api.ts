@@ -60,6 +60,14 @@ class API {
   get client () {
     return this.apiClient
   }
+
+  async dispose () {
+    await this.store.close()
+    this.store = null
+
+    this.accessToken = undefined
+    this.apiClient = null
+  }
 }
 
 export default new API()
