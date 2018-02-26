@@ -45,7 +45,7 @@ json_select_object "albums"
 
 		# Year
 		json_select "release_date"
-		sayuntil "\""
+		sayrest
 
 		saynewline
 

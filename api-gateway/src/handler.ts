@@ -11,12 +11,22 @@ async function init () {
 
 async function searchAlbum (query, callback) {
   const { keyword } = query
-  const response = await Api.client.searchFetcher
+  const { data } = await Api.client.searchFetcher
                          .setSearchCriteria(keyword, 'album')
                          .fetchSearchResult(50)
+
+  data.albums.data = data.albums.data.map(album => {
+    const m = album.release_date.match(/\d+/)
+    album.release_date = m ? m[0] : ""
+
+    return {
+      ...album,
+    }
+  })
+
   callback(null, {
     statusCode: 200,
-    body: stringify(response.data)
+    body: stringify(data)
   })
 }
 
@@ -28,6 +38,9 @@ async function getAlbum (query, callback) {
 
   meta.image = meta.images.find(image => image.height === 500)
   if (!meta.image) { meta.image = meta.images[0] }
+
+  const m = meta.release_date.match(/\d+/)
+  meta.release_date = m ? m[0] : ""
 
   tracks.data = tracks.data.map(track => {
     const date = new Date(null)
