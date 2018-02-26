@@ -9,16 +9,14 @@ interface IAuthData {
 class API {
   private auth : Auth
   private accessToken? : string
-  private store : Store
+  private store : Store | null
   private apiClient : Api
 
-  constructor() {
+  async initialize() {
+    this.accessToken = undefined
     this.auth = new Auth(process.env.KKBOX_APP_ID, process.env.KKBOX_APP_SECRET)
     this.store = new Store()
-    this.accessToken = undefined
-  }
 
-  async initialize() {
     await this.getAccessToken()
     this.apiClient = new Api(this.accessToken)
   }
