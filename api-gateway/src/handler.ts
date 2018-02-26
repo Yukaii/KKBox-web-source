@@ -12,7 +12,7 @@ async function init () {
 async function searchAlbum (query, callback) {
   const { keyword } = query
   const response = await Api.client.searchFetcher
-                         .setSearchCriteria(encodeURI(keyword), 'album')
+                         .setSearchCriteria(keyword, 'album')
                          .fetchSearchResult(50)
   callback(null, {
     statusCode: 200,
@@ -31,7 +31,7 @@ async function getAlbum (query, callback) {
 
   tracks.data = tracks.data.map(track => {
     const date = new Date(null)
-    date.setSeconds(track.duration / 1000)
+    date.setSeconds(Math.round(track.duration / 1000))
 
     let duration = date.toISOString().substr(11, 8)
 
