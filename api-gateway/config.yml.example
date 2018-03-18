@@ -4,3 +4,6 @@ kkbox_app_secret:
 
 # redis connection info
 redis_url:
+
+stage: dev
+region: 'ap-southeast-1'

@@ -7,6 +7,8 @@ plugins:
 provider:
   name: aws
   runtime: nodejs6.10
+  stage: ${self:custom.config.stage}
+  region: ${self:custom.config.region, 'us-east-1'}
   environment:
     KKBOX_APP_ID: ${self:custom.config.kkbox_app_id, ''}
     KKBOX_APP_SECRET: ${self:custom.config.kkbox_app_secret, ''}
