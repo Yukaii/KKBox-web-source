@@ -6,65 +6,68 @@
 # #################################
 
 [Name]=KKbox
-[BasedOn]=http://www.kkbox.com
-[IndexUrl]=http://www.kkbox.com/tw/tc/search.php?search=album&word=%s
-[AlbumUrl]=http://www.kkbox.com
-[WordSeperator]=+
-[IndexFormat]=%_url%|%album%|%artist%
+[BasedOn]=http://localhost:3000/
+[IndexUrl]=http://localhost:3000/api/searchAlbum?keyword=%s
+[AlbumUrl]=http://localhost:3000/api/albums?id=
+[WordSeparator]=%20
+[IndexFormat]=%Artist%|%Album%|%_url%|%Year%
 [SearchBy]=%album%
+[UserAgent]=1
 [Encoding]=url-utf-8
 
-
 [ParserScriptIndex]=...
-# ###################################################################
-#					I  N  D  E  X
-# ###################################################################
+# ##############################
+#					I  N  D  E  X        #
+# ##############################
+debug "on" "c:\\debug_kkbox1.htm"
 
-# debug "on" "d:\\debug_kkbox1.htm"
+json "ON"
 
-findline "class=\"search-group\""
+json_select_object "albums"
+	json_foreach "data"
 
-do
-	findline "class=\"album\""
-	findline "class=\"cover\""
+		# Artist
+		json_select_object "artist"
+			json_select "name"
+			sayrest
+		json_unselect_object
+		say "|"
 
-	# Url
-	findinline "href=\""
-	sayuntil "\""
-	say "|"
+		# Album
+		json_select "name"
+		sayrest
+		say "|"
 
-	# Album
-	findinline "title=\""
-	sayuntil "\""
-	say "|"
+		# Url
+		json_select "id"
+		sayrest
+		say "|"
 
-	# Artist
-	findline "playlist-sharer"
-	findline "<a href"
-	findinline "title=\""
-	sayuntil "\""
-	saynewline
+		# Year
+		json_select "release_date"
+		sayuntil "\""
 
-	findline "<div class" 2
-	findinline "class=\""
-while "album"
+		saynewline
+
+	json_foreach_end
+json_unselect_object
 
 
 [ParserScriptAlbum]=...
 # ###################################################################
 #					A  L  B  U  M
 # ###################################################################
-#debug "on" "d:\\debug_kkbox2.htm"
+debug "on" "c:\\debug_kkbox2.htm"
 
-# CoverURL
-# outputto "Album"
-findline "class=\"fa fa-angle-right\""
-findline "span"
-findinline "span>"
-# sayuntil "</span>"
+json "ON"
 
-# CoverURL
-outputto "coverurl"
-findline "<img src=\""
-findinline "src=\""
-sayuntil "\""
+json_select_object "meta"
+
+	# Cover
+	json_select_object "image"
+		json_select "url"
+		outputto "coverurl"
+		sayrest
+	json_unselect_object
+
+json_unselect_object
